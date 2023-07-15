@@ -15,7 +15,7 @@ class DisplayNode:
         rospy.init_node('display_node', anonymous=True)
 
         # subscribe to camera topic and overlay_topic
-        #rospy.Subscriber('camera_topic', Image, self.camera_callback)
+        rospy.Subscriber('camera_topic', Image, self.camera_callback)
         rospy.Subscriber('overlay_topic', Image, self.overlay_callback)
 
     def camera_callback(self, data):
