@@ -17,6 +17,8 @@ import warnings
 from home_monitoring_pkg.msg import PredictionMsg
 
 warnings.filterwarnings("ignore")
+
+# import models for pose prediction
 mp_holistic = mp.solutions.holistic
 with open('/home/mustar/kakap_ws/src/home_monitoring_pkg/scripts/models/body_language.pkl', 'rb') as f:
     model = pickle.load(f)
@@ -26,9 +28,12 @@ class PredictionNode:
     def __init__(self):
         rospy.init_node('prediction_node', anonymous=True)
 
+        # subscribe to camera topic
         rospy.Subscriber('camera_topic', Image, self.camera_callback)
+        
         self.prediction_pub = rospy.Publisher('prediction_topic', PredictionMsg, queue_size=10)
-        # Load face detector and mask detector models
+        
+        # Load face detector and mask detector models, for mask detection
         self.prototxtPath = "/home/mustar/kakap_ws/src/home_monitoring_pkg/scripts/models/deploy.prototxt"
         self.weightsPath = "/home/mustar/kakap_ws/src/home_monitoring_pkg/scripts/models/res10_300x300_ssd_iter_140000.caffemodel"
         self.faceNet = cv2.dnn.readNet(self.prototxtPath, self.weightsPath)
@@ -36,9 +41,13 @@ class PredictionNode:
 
     def camera_callback(self, data):
 
+        # get frame from camera_topic, then convert ros image msg to cv2 image
         current_frame = imgmsg_to_cv2(data)
         
+        # get mask prediction data
         mask_prediction_tuple = self.detect_mask(current_frame)
+
+        # get pose prediction data
         pose_prediction_tuple = self.detect_pose(current_frame, model)
 
         # initialize custom messageType written in msg/prediction.msg
@@ -59,7 +68,7 @@ class PredictionNode:
         prediction_msg.y_pose = pose_prediction_tuple[3]
 
         
-
+        # publish both mask and pose prediction data to prediction_topic
         self.prediction_pub.publish(prediction_msg)
         return
 
@@ -81,11 +90,7 @@ class PredictionNode:
 
             # Include the probability in the label
             label_prob = "{}: {:.2f}%".format(label, max(mask, withoutMask) * 100)
-            
-            # # Draw bounding box and label on the frame
-            # cv2.putText(frame, label, (startX, startY - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
-            # cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
-        
+             
         return (label, label_prob, x_start, y_start, x_end, y_end)
 
     def detect_and_predict_mask(self, frame, faceNet, maskNet):

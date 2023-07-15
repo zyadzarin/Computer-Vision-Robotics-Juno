@@ -11,17 +11,22 @@ def callback(data):
 
     # Convert ROS Image message to OpenCV image
     sus_image = imgmsg_to_cv2(data)
+
     frame_filename = f"thief.jpg"
+    # save image
     cv2.imwrite(frame_filename, sus_image)
+
+    # open saved image and send to telegram bot through POST HTTP request
     with open('thief.jpg', 'rb') as image_file:
         files = {'photo': image_file,
-                'caption': "uwu please help"}
+                'caption': "Suspicious activity detected"}
         response = requests.post('https://scubed-telebot-aa8bc18176d7.herokuapp.com/notify', files=files)
 
 #receive suspicious image
 def receive_message():
     rospy.init_node('telegram_bot_py', anonymous=True)
 
+    # subscribe to suspicious topic to get image
     rospy.Subscriber('suspicious_topic', Image, callback)
     rospy.spin()
 

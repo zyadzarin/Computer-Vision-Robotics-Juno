@@ -1,31 +1,27 @@
 #!/usr/bin/env python3
 
 # Import the necessary libraries
-import rospy # Python library for ROS
-from sensor_msgs.msg import Image # Image is the message type
-#from cv_bridge import CvBridge # Package to convert between ROS and OpenCV Images
-import cv2 # OpenCV library
+import rospy 
+from sensor_msgs.msg import Image 
+import cv2
 from utils.not_cv_bridge import cv2_to_imgmsg
   
 def publish_message():
  
-  # Node is publishing to the video_frames topic using 
+  # Node is publishing to the camera_topic using 
   # the message type Image
   pub = rospy.Publisher('camera_topic', Image, queue_size=10)
      
   # Tells rospy the name of the node.
-  # Anonymous = True makes sure the node has a unique name. Random
-  # numbers are added to the end of the name.
+  # Anonymous = True makes sure the node has a unique name.=
   rospy.init_node('video_pub_py', anonymous=True)
      
-  # Go through the loop 10 times per second
+  # Go through the loop 30 times per second
   rate = rospy.Rate(30) 
      
   # Create a VideoCapture object
-  # The argument '0' gets the default webcam.
+  # The argument '2' gets the juno webcam.
   cap = cv2.VideoCapture(2)
-     
-  # Used to convert between ROS and OpenCV images
  
   # While ROS is still running.
   while not rospy.is_shutdown():
