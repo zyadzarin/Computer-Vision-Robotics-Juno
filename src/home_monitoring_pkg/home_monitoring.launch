@@ -1,0 +1,7 @@
+<launch>
+	<node pkg ="home_monitoring_pkg" type="CameraNode.py" name="camera node" output="screen"/>
+	<node pkg ="home_monitoring_pkg" type="PredictionNode.py" name="PredictionNode" output="screen"/>
+	<node pkg ="home_monitoring_pkg" type="OverlayNode.py" name="Overlay Node" output="screen"/>
+	<node pkg ="home_monitoring_pkg" type="DisplayNode.py" name="Display Node" output="screen"/>
+	<node pkg ="home_monitoring_pkg" type="TelegramBot.py" name="Telegram Bot" output="screen"/>
+</launch>
