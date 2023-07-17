@@ -1,0 +1,7 @@
+pickle 
+mediapipe
+opencv-python
+numpy
+pandas
+tensorflow
+imutils
